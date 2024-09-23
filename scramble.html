@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scramble Words</title>
+</head>
+<style>
+    *{
+        margin: 0;
+        padding: 0;
+    }
+    @font-face {
+        font-family: font1;
+        src: url(Raleway-VariableFont_wght.ttf);
+    }
+    body{
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: rgb(156, 105, 252);
+        font-family:font1;
+    }
+    #container{
+        background-color: white;
+        border-radius:5px;
+        width: 430px;
+        height: 430px;
+    }
+    #heading{
+        height: 65px;
+        border-bottom:.1px solid rgb(161, 161, 161);
+        font-size: 25px;
+        padding-left: 20px;
+        display: flex;
+        align-items: center;
+    }
+    #block1{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 80px;
+        letter-spacing: 20px;
+        font-size: 20px;
+    }
+    #block2{
+        margin-left: 20px;
+        font-size: 20px;
+        line-height: 40px;
+    }
+    #lab{
+        height: 100px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    input{
+        height: 60px;
+        width: 90%;
+        border: 1px solid  rgb(161, 161, 161);
+        border-radius: 5px;
+        font-size: 19px;
+        padding-left: 20px;
+    }
+    #btn{
+        height: 100px;
+        display: flex;
+        align-items: center;
+        justify-content: space-evenly;
+    }
+    button{
+        height: 55px;
+        width: 190px;
+        border-radius:5px;
+        font-size: 17px;
+        border: none;
+    }
+    #refresh{
+        background-color:rgb(121, 121, 121);
+        color: white;
+    }
+    #check{
+        background-color: rgb(156, 105, 252);
+        color: white;
+    }
+</style>
+<body>
+<div id="container">
+    <div id="heading"> 
+        <h4>Word Scramble</h4>
+    </div>
+    <div id="block1">
+            <h2 id="scrumbledword"></h2>
+    </div>
+    <div id="block2">
+        <p id="hint"></p>
+        <p id="timer"></p>
+    </div>
+    <div id="lab">
+        <input type="text" id="inp" placeholder="Enter a vaild word">
+    </div>
+    <div id="btn">
+        <button id="refresh">Refresh Word</button>
+        <button id="check">Check Word </button>
+    </div>
+        
+</div>
+   
+    <script>
+        let h1=document.getElementById('scrumbledword')
+        let h3=document.getElementById('hint')
+        let input=document.getElementById('inp')
+        let check=document.getElementById('check')
+        let refresh=document.getElementById('refresh')
+        let timer=document.getElementById('timer')
+        let words= [
+    { word: "apple", hint: "Fruit, red or green." },
+    { word: "computer", hint: "Processes data, electronic device." },
+    { word: "ocean", hint: "Saltwater, covers Earth." },
+    { word: "mountain", hint: "Rises above land." },
+    { word: "guitar", hint: "Musical strings." },
+    { word: "sunflower", hint: "Golden flowers." },
+    { word: "elephant", hint: "Large mammal, long trunk." },
+    { word: "pizza", hint: "Italian dish." },
+    { word: "book", hint: "Printed work, pages." },
+    { word: "bicycle", hint: "Two-wheeled vehicle." },
+    { word: "umbrella", hint: "Rain protection." },
+    { word: "lamp", hint: "Provides light." },
+    { word: "moon", hint: "Earth's satellite." },
+    { word: "flower", hint: "Blooms, colorful petals." },
+    { word: "cat", hint: "Domesticated feline." },
+    { word: "dog", hint: "Faithful pet." },
+    { word: "tree", hint: "Tall plant, branches." },
+    { word: "river", hint: "Water flow, to sea." },
+    { word: "bridge", hint: "Crosses river." },
+    { word: "chair", hint: "Seat with backrest." },
+    { word: "telephone", hint: "Communication device." },
+    { word: "keyboard", hint: "Typing tool." },
+    { word: "cloud", hint: "Floating water vapor." },
+    { word: "star", hint: "Shiny celestial body." },
+    { word: "car", hint: "Road vehicle." },
+    { word: "shoes", hint: "Footwear." },
+    { word: "house", hint: "Residence." },
+    { word: "clock", hint: "Time indicator." },
+    { word: "flowerpot", hint: "Plant container." },
+    { word: "mirror", hint: "Reflective surface." },
+    { word: "television", hint: "Screen entertainment." },
+    { word: "window", hint: "Glass opening." },
+    { word: "ball", hint: "Round object." },
+    { word: "keyboard", hint: "Typing tool." },
+    { word: "hat", hint: "Head covering." },
+    { word: "globe", hint: "Earth model." },
+    { word: "milk", hint: "White liquid." },
+    { word: "table", hint: "Surface furniture." },
+    { word: "pencil", hint: "Writing tool." },
+    { word: "jacket", hint: "Outerwear." },
+    { word: "banana", hint: "Curved fruit." },
+    { word: "door", hint: "Entrance barrier." },
+    { word: "plate", hint: "Food holder." },
+    { word: "pillow", hint: "Sleep support." },
+    { word: "bag", hint: "Carry container." },
+    { word: "glasses", hint: "Vision aid." }
+];
+        let selectingword
+        let scrumbledword
+        let hint
+        let string
+        let store
+        let time=null
+        let sec
+        callword()
+        function callword(){
+            sec=30
+            timer.innerHTML=`Time Left: `+sec
+            clearInterval(time)
+            selectingword=Math.floor(Math.random()*words.length)
+            scrumbledword=words[selectingword].word
+            hint=words[selectingword].hint
+            string = ""
+            store = []
+            while(true){
+            let indexValue = Math.floor(Math.random()*scrumbledword.length)
+            if(!(store.includes(indexValue))){
+                string  += scrumbledword[indexValue] 
+                store.push(indexValue) 
+            }
+            if(store.length==scrumbledword.length)
+                break
+        }
+        h1.innerHTML=string.toUpperCase();
+        h3.innerHTML=`Hint :`+hint
+        input.value=""
+
+        time=setInterval(timers,1000)
+        function timers(){
+           sec-=1 
+           timer.innerHTML=`Time Left: `+sec
+           if(sec===0){
+                alert(`Time off! ${input} was the correct word`)
+                callword()
+            }
+        }
+    }
+        check.addEventListener('click',()=>{
+            let input=document.getElementById('inp').value
+            if(scrumbledword==input){
+                alert(`Congrats! ${input} is the correct word`)
+            }
+            else{
+                alert(`Oops! ${input} is not a correct word`)
+            }
+            callword()
+        })
+        refresh.addEventListener('click',()=>{
+           callword() 
+        })
+
+    </script>
+</body>
+</html>
